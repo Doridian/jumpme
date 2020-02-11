@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -39,7 +40,7 @@ func (p *sshKnownHostsFinder) RunOnFile(absPath string) []string {
 		if host[0:3] == "|1|" {
 			continue
 		}
-		results = append(results, host)
+		results = append(results, fmt.Sprintf("FILE %s; HOST %s", absPath, host))
 	}
 	return results
 }
