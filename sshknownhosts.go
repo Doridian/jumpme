@@ -10,10 +10,12 @@ type sshKnownHostsFinder struct {
 	HomeFileProcessor
 }
 
-func MakeSSHKnownHostsFinder() *sshKnownHostsFinder {
+func MakeSSHKnownHostsFinder() IProcessor {
 	finder := &sshKnownHostsFinder{}
+	finder.Name = "SSH knowns hosts"
+	finder.DoUnique = true
 	finder.FileNames = []string{".ssh/known_hosts"}
-	finder.HomeFileProcessor.iFileProcessor = finder
+	finder.HomeFileProcessor.IProcessor = finder
 	return finder
 }
 
@@ -29,9 +31,11 @@ func (p *sshKnownHostsFinder) RunOnFile(absPath string) []string {
 	for scanner.Scan() {
 		fields := strings.Split(scanner.Text(), " ")
 		host := fields[0]
+		// Comments or blank lines
 		if len(host) < 1 || host[0] == '#' {
 			continue
 		}
+		// Hashed hostnames
 		if host[0:3] == "|1|" {
 			continue
 		}

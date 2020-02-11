@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"io/ioutil"
+	"log"
 	"os"
 	"path"
 	"strings"
@@ -10,11 +12,25 @@ import (
 
 const PASSWD_FIELD_HOMEDIR = 5
 
+var typeFlag = flag.String("type", "help", "Choose which type of processor to run")
+
+var processorMakers map[string]ProcessorMaker
+
 func main() {
+	flag.Parse()
+	processorMakers = make(map[string]ProcessorMaker)
+
 	IsRoot = os.Geteuid() == 0
 	HomeDirs = getHomeDirs()
 
-	proc := MakeSSHKnownHostsFinder()
+	processorMakers["history"] = MakeShellHistorySearcher
+	processorMakers["known"] = MakeSSHKnownHostsFinder
+	processorMakers["keys"] = MakeSSHKeyFinder
+
+	proc := processorMakers[*typeFlag]()
+
+	log.Printf("Running processor \"%s\"", proc.GetName())
+
 	for _, f := range proc.Run() {
 		print(f)
 		print("\n")

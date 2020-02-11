@@ -11,10 +11,12 @@ type sshKeyFinder struct {
 	HomeFileProcessor
 }
 
-func MakeSSHKeyFinder() *sshKeyFinder {
+func MakeSSHKeyFinder() IProcessor {
 	finder := &sshKeyFinder{}
+	finder.Name = "SSH keys"
+	finder.DoUnique = true
 	finder.FileNames = []string{".ssh/id_rsa", ".ssh/id_dsa", ".ssh/id_ed25519"}
-	finder.HomeFileProcessor.iFileProcessor = finder
+	finder.HomeFileProcessor.IProcessor = finder
 	return finder
 }
 
