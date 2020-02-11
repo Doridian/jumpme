@@ -36,5 +36,5 @@ func (p *sshKeyFinder) RunOnFile(absPath string) []string {
 	if strings.Index(string(contents), "ENCRYPTED") > 0 {
 		state = "ENCRYPTED"
 	}
-	return []string{fmt.Sprintf("KEY: %s; STATE: %s", absPath, state)}
+	return []string{fmt.Sprintf("FILE %s; STATE %s", absPath, state)}
 }
