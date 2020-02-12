@@ -20,7 +20,7 @@ func MakeSSHKnownHostsFinder() IProcessor {
 	return finder
 }
 
-func (p *sshKnownHostsFinder) RunOnFile(absPath string) []string {
+func (p *sshKnownHostsFinder) RunFor(absPath string) []string {
 	file, err := os.Open(absPath)
 	if err != nil {
 		return []string{}

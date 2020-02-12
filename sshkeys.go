@@ -20,7 +20,7 @@ func MakeSSHKeyFinder() IProcessor {
 	return finder
 }
 
-func (p *sshKeyFinder) RunOnFile(absPath string) []string {
+func (p *sshKeyFinder) RunFor(absPath string) []string {
 	file, err := os.Open(absPath)
 	if err != nil {
 		return []string{}

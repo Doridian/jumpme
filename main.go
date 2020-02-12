@@ -8,9 +8,12 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 )
 
+const PASSWD_FIELD_USERNAME = 0
+const PASSWD_FIELD_UID = 2
 const PASSWD_FIELD_HOMEDIR = 5
 
 var typeFlag = flag.String("type", "help", "Choose which type of processor to run")
@@ -21,8 +24,7 @@ func main() {
 	flag.Parse()
 	processorMakers = make(map[string]ProcessorMaker)
 
-	IsRoot = os.Geteuid() == 0
-	HomeDirs = getHomeDirs()
+	loadData()
 
 	processorMakers["history"] = MakeShellHistorySearcher
 	processorMakers["known"] = MakeSSHKnownHostsFinder
@@ -37,7 +39,9 @@ func main() {
 	}
 }
 
-func getHomeDirs() []string {
+func loadData() {
+	IsRoot = os.Geteuid() == 0
+
 	homeFolderSet := make(map[string]bool)
 
 	addPath := func(subPath string) {
@@ -64,14 +68,17 @@ func getHomeDirs() []string {
 		passwdScanner := bufio.NewScanner(passwdStream)
 		for passwdScanner.Scan() {
 			passwdFields := strings.Split(passwdScanner.Text(), ":")
+			uid, err := strconv.ParseInt(passwdFields[PASSWD_FIELD_UID], 10, 32)
+			if err == nil {
+				UIDToName[int(uid)] = passwdFields[PASSWD_FIELD_USERNAME]
+			}
 			addPath(passwdFields[PASSWD_FIELD_HOMEDIR])
 		}
 		passwdStream.Close()
 	}
 
-	keys := make([]string, 0, len(homeFolderSet))
+	HomeDirs := make([]string, 0, len(homeFolderSet))
 	for k := range homeFolderSet {
-		keys = append(keys, k)
+		HomeDirs = append(HomeDirs, k)
 	}
-	return keys
 }
