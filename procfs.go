@@ -20,6 +20,8 @@ type UnixProcess struct {
 	Uid      int
 	Username string
 	Gid      int
+	Cmdline  []string
+	Environ  map[string]string
 }
 
 var processes []*UnixProcess
@@ -67,6 +69,29 @@ func (p *UnixProcess) Refresh() error {
 		&p.Ppid,
 		&p.Pgrp,
 		&p.Sid)
+
+	cmdline, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/cmdline", p.Pid))
+	if err != nil {
+		return err
+	}
+
+	p.Cmdline = strings.Split(string(cmdline), "\000")
+
+	environ, err := ioutil.ReadFile(fmt.Sprintf("/proc/%d/environ", p.Pid))
+	if err != nil {
+		return err
+	}
+
+	p.Environ = make(map[string]string)
+	environSplit := strings.Split(string(environ), "\000")
+	for _, v := range environSplit {
+		varSplit := strings.SplitN(v, "=", 2)
+		if len(varSplit) < 2 {
+			p.Environ[varSplit[0]] = ""
+		} else {
+			p.Environ[varSplit[0]] = varSplit[1]
+		}
+	}
 
 	return err
 }
