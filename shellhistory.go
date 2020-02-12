@@ -19,7 +19,7 @@ func MakeShellHistorySearcher() IProcessor {
 	finder.Name = "Shell history"
 	finder.DoUnique = true
 	finder.FileNames = []string{".bash_history", ".zsh_history", ".ash_history"}
-	finder.HomeFileProcessor.IProcessor = finder
+	finder.HomeFileProcessor.IFileProcessor = finder
 	return finder
 }
 

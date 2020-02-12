@@ -16,7 +16,7 @@ const PASSWD_FIELD_USERNAME = 0
 const PASSWD_FIELD_UID = 2
 const PASSWD_FIELD_HOMEDIR = 5
 
-var typeFlag = flag.String("type", "help", "Choose which type of processor to run")
+var typeFlag = flag.String("type", "all", "Choose which type of processor to run")
 
 var processorMakers map[string]ProcessorMaker
 
@@ -30,10 +30,19 @@ func main() {
 	processorMakers["known"] = MakeSSHKnownHostsFinder
 	processorMakers["keys"] = MakeSSHKeyFinder
 
-	proc := processorMakers[*typeFlag]()
+	typeProc := *typeFlag
+	if typeProc == "all" {
+		for _, proc := range processorMakers {
+			runProc(proc)
+		}
+		return
+	}
+	runProc(processorMakers[typeProc])
+}
 
+func runProc(procMaker ProcessorMaker) {
+	proc := procMaker()
 	log.Printf("Running processor \"%s\"", proc.GetName())
-
 	for _, f := range proc.Run() {
 		fmt.Printf("%s\n", f)
 	}
@@ -62,6 +71,8 @@ func loadData() {
 	// Add current user's homedir
 	addPath(os.Getenv("HOME"))
 
+	UIDToName = make(map[int]string)
+
 	// Parse /etc/passwd to find more homes
 	passwdStream, err := os.Open("/etc/passwd")
 	if err == nil {
@@ -77,7 +88,7 @@ func loadData() {
 		passwdStream.Close()
 	}
 
-	HomeDirs := make([]string, 0, len(homeFolderSet))
+	HomeDirs = make([]string, 0, len(homeFolderSet))
 	for k := range homeFolderSet {
 		HomeDirs = append(HomeDirs, k)
 	}

@@ -16,7 +16,7 @@ func MakeSSHKnownHostsFinder() IProcessor {
 	finder.Name = "SSH knowns hosts"
 	finder.DoUnique = true
 	finder.FileNames = []string{".ssh/known_hosts"}
-	finder.HomeFileProcessor.IProcessor = finder
+	finder.HomeFileProcessor.IFileProcessor = finder
 	return finder
 }
 

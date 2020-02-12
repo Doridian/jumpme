@@ -16,7 +16,7 @@ func MakeSSHKeyFinder() IProcessor {
 	finder.Name = "SSH keys"
 	finder.DoUnique = true
 	finder.FileNames = []string{".ssh/id_rsa", ".ssh/id_dsa", ".ssh/id_ed25519"}
-	finder.HomeFileProcessor.IProcessor = finder
+	finder.HomeFileProcessor.IFileProcessor = finder
 	return finder
 }
 
