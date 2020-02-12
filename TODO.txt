@@ -1,0 +1,3 @@
+- look for ssh-agent processes
+- look for SSH_AUTH_SOCK env var on SSH processes
+- look for ssh processes. (inject a channel?)

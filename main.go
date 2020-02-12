@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -32,8 +33,7 @@ func main() {
 	log.Printf("Running processor \"%s\"", proc.GetName())
 
 	for _, f := range proc.Run() {
-		print(f)
-		print("\n")
+		fmt.Printf("%s\n", f)
 	}
 }
 
