@@ -29,6 +29,7 @@ func main() {
 	processorMakers["history"] = MakeShellHistorySearcher
 	processorMakers["known"] = MakeSSHKnownHostsFinder
 	processorMakers["keys"] = MakeSSHKeyFinder
+	processorMakers["procs"] = MakeSSHProcsSearcher
 
 	typeProc := *typeFlag
 	if typeProc == "all" {

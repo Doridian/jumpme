@@ -45,7 +45,12 @@ func (p *UnixProcess) Refresh() error {
 
 	statConv := stat.Sys().(*syscall.Stat_t)
 	p.Uid = int(statConv.Uid)
-	p.Username = UIDToName[p.Uid]
+	uname, ok := UIDToName[p.Uid]
+	if ok {
+		p.Username = uname
+	} else {
+		p.Username = strconv.FormatInt(int64(p.Uid), 10)
+	}
 	p.Gid = int(statConv.Gid)
 
 	// First, parse out the image name

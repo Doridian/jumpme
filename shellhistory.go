@@ -4,15 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 )
 
 type shellHistorySearcher struct {
 	HomeFileProcessor
 }
-
-var sshLikeCommand = regexp.MustCompilePOSIX("(ssh|scp|sftp|rsync|git remote|git clone) ")
-var hostLikePattern = regexp.MustCompilePOSIX("([a-zA-Z0-9]+@)?[a-zA-Z0-9\\-\\_]+\\.[a-zA-Z0-9\\-\\_\\.]+")
 
 func MakeShellHistorySearcher() IProcessor {
 	finder := &shellHistorySearcher{}
@@ -34,10 +30,10 @@ func (p *shellHistorySearcher) RunFor(absPath string) []string {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		history := scanner.Text()
-		if !sshLikeCommand.MatchString(history) {
+		if !SshLikeCommand.MatchString(history) {
 			continue
 		}
-		matches := hostLikePattern.FindAllString(history, -1)
+		matches := HostLikePattern.FindAllString(history, -1)
 		for _, v := range matches {
 			results = append(results, fmt.Sprintf("FILE %s; HOST %s", absPath, v))
 		}
