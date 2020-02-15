@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
@@ -21,13 +20,7 @@ func MakeSSHKeyFinder() IProcessor {
 }
 
 func (p *sshKeyFinder) RunFor(absPath string) []string {
-	file, err := os.Open(absPath)
-	if err != nil {
-		return []string{}
-	}
-	defer file.Close()
-
-	contents, err := ioutil.ReadAll(file)
+	contents, err := ioutil.ReadFile(absPath)
 	if err != nil {
 		return []string{}
 	}

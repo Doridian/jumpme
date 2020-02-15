@@ -30,6 +30,7 @@ func main() {
 	processorMakers["known"] = MakeSSHKnownHostsFinder
 	processorMakers["keys"] = MakeSSHKeyFinder
 	processorMakers["procs"] = MakeSSHProcsSearcher
+	processorMakers["socks"] = MakeSSHAuthSockSearcher
 
 	typeProc := *typeFlag
 	if typeProc == "all" {
